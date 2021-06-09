@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="
+本文简单探讨socket即时通讯及基于AsyncDisplayKit在项目中的应用，代码较多，简单介绍下其中的部分模块，文章持续更新中…
+">
+  <meta name="author" content="徐文俊">
+  <meta name="keywords" content="">
+  
+  <title>swift5.0 + ASDK + socket.IO - 徐文俊的博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"wenjun-xu.github.io","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":1},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>徐文俊的博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                目录
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                个人主页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                链接
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://github.com/wenjun-xu">
+                    
+                    Github
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://www.jianshu.com/u/a0a166a4fbd6">
+                    
+                    简书
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="swift5.0 + ASDK + socket.IO">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      徐文俊
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-06-06 09:23" pubdate>
+        2019年6月6日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">swift5.0 + ASDK + socket.IO</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：6 天前
+                
+              </p>
+            
+            <div class="markdown-body">
+              <blockquote>
+<p>本文简单探讨socket即时通讯及基于AsyncDisplayKit在项目中的应用，代码较多，简单介绍下其中的部分模块，文章持续更新中…</p>
+</blockquote>
+<span id="more"></span>
+<blockquote>
+<p>移动端涉及主要三方框架<br>Texture、Alamofire、Socket.IO-Client-Swift、SwiftyJSON、FMDB、SSZipArchive…<br>node端涉及主要三方框架<br>socket.io、mongoose、redis、compression、apn…</p>
+</blockquote>
+<ul>
+<li>关于AsyncDisplayKit<br>AsyncDisplayKit是一个UI框架，他就是对UIKit的封装，最初诞生于 Facebook，为了缓解主线程的压力，提升用户体验。它最大的特点就是”异步”，将消耗时间的渲染、图片解码、布局以及其它 UI 操作等等全部移出主线程，这样主线程就可以对用户的操作及时做出反应，来达到流畅运行的目的。我们在项目中使用最多的就是tableview，接下来以tableview为例，简单介绍下ASDK在项目中的应用，更多ASDk内容  <a target="_blank" rel="noopener" href="https://texturegroup.org/">https://texturegroup.org</a><figure class="highlight swift"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> AsyncDisplayKit<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HomeViewController</span>: <span class="hljs-title">ASViewController</span>&lt;<span class="hljs-title">ASDisplayNode</span>&gt; </span>&#123;<br>    <span class="hljs-keyword">fileprivate</span> <span class="hljs-keyword">var</span> dataSource: [<span class="hljs-type">CharItem</span>] <span class="hljs-operator">=</span> []<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">let</span> tableNode <span class="hljs-operator">=</span> <span class="hljs-type">ASTableNode</span>(style: .plain)<br>    <span class="hljs-function"><span class="hljs-keyword">init</span>()</span> &#123;<br>        <span class="hljs-keyword">super</span>.<span class="hljs-keyword">init</span>(node: <span class="hljs-type">ASDisplayNode</span>())<br>        node.addSubnode(tableNode)<br>        tableNode.dataSource <span class="hljs-operator">=</span> <span class="hljs-keyword">self</span><br>        tableNode.delegate <span class="hljs-operator">=</span> <span class="hljs-keyword">self</span><br>    &#125;<br>    <br>    <span class="hljs-keyword">required</span> <span class="hljs-function"><span class="hljs-keyword">init?</span>(<span class="hljs-params">coder</span> <span class="hljs-params">aDecoder</span>: <span class="hljs-type">NSCoder</span>)</span> &#123;<br>        <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">&quot;init(coder:) has not been implemented&quot;</span>)<br>    &#125;<br>    <br>    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">viewDidLoad</span>()</span> &#123;<br>        <span class="hljs-keyword">super</span>.viewDidLoad()<br>        <span class="hljs-keyword">self</span>.title <span class="hljs-operator">=</span> <span class="hljs-string">&quot;首页&quot;</span><br>        tableNode.view.allowsMultipleSelectionDuringEditing <span class="hljs-operator">=</span> <span class="hljs-literal">false</span><br>        requestData()<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">requestData</span>()</span> &#123;<br>        <span class="hljs-type">NetAlamofireTool</span>.netWork(<span class="hljs-type">Constants</span>.allUsers, parameters: [<span class="hljs-string">&quot;&quot;</span>:<span class="hljs-string">&quot;&quot;</span>], method: .get) &#123; (result) <span class="hljs-keyword">in</span><br>            <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> result[<span class="hljs-type">RET_DATA</span>][<span class="hljs-string">&quot;allUser&quot;</span>].arrayValue &#123;<br>                <span class="hljs-type">DLog</span>(result, fileName: <span class="hljs-string">&quot;HomeViewController&quot;</span>, methName: <span class="hljs-string">&quot;allUsers&quot;</span>)<br>                <span class="hljs-keyword">let</span> charItem <span class="hljs-operator">=</span> <span class="hljs-type">CharItem</span>(CharItemID: item[<span class="hljs-string">&quot;_id&quot;</span>].stringValue, name: item[<span class="hljs-string">&quot;name&quot;</span>].stringValue)<br>                charItem content <span class="hljs-operator">=</span> <span class="hljs-string">&quot;今天不逼自己学会72变，日后谁能代你承受81难&quot;</span><br>                charItem.avatar <span class="hljs-operator">=</span> <span class="hljs-type">URL</span>.<span class="hljs-keyword">init</span>(string: item[<span class="hljs-string">&quot;avatar&quot;</span>].stringValue)<br>                <span class="hljs-keyword">self</span>.dataSource.append(charItem)<br>            &#125;<br>            <span class="hljs-keyword">self</span>.tableNode.reloadData()<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-class"><span class="hljs-keyword">extension</span> <span class="hljs-title">HomeViewController</span>: <span class="hljs-title">ASTableDelegate</span>, <span class="hljs-title">ASTableDataSource</span> </span>&#123;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">numberOfSections</span>(<span class="hljs-params">in</span> <span class="hljs-params">tableNode</span>: <span class="hljs-type">ASTableNode</span>)</span> -&gt; <span class="hljs-type">Int</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span><br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">tableNode</span>(<span class="hljs-keyword">_</span> <span class="hljs-params">tableNode</span>: <span class="hljs-type">ASTableNode</span>, <span class="hljs-params">numberOfRowsInSection</span> <span class="hljs-params">section</span>: <span class="hljs-type">Int</span>)</span> -&gt; <span class="hljs-type">Int</span> &#123;<br>        <span class="hljs-keyword">return</span> dataSource.count<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">tableNode</span>(<span class="hljs-keyword">_</span> <span class="hljs-params">tableNode</span>: <span class="hljs-type">ASTableNode</span>, <span class="hljs-params">nodeBlockForRowAt</span> <span class="hljs-params">indexPath</span>: <span class="hljs-type">IndexPath</span>)</span> -&gt; <span class="hljs-type">ASCellNodeBlock</span> &#123;<br>        <span class="hljs-keyword">let</span> model <span class="hljs-operator">=</span> dataSource[indexPath.row]<br>        <span class="hljs-keyword">let</span> block: <span class="hljs-type">ASCellNodeBlock</span> <span class="hljs-operator">=</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-type">WJCellNode</span>(model: model)<br>        &#125;<br>        <span class="hljs-keyword">return</span> block<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">tableNode</span>(<span class="hljs-keyword">_</span> <span class="hljs-params">tableNode</span>: <span class="hljs-type">ASTableNode</span>, <span class="hljs-params">didSelectRowAt</span> <span class="hljs-params">indexPath</span>: <span class="hljs-type">IndexPath</span>)</span> &#123;<br>        tableNode.deselectRow(at: indexPath, animated: <span class="hljs-literal">false</span>)<br>        <span class="hljs-keyword">let</span> meVC <span class="hljs-operator">=</span> <span class="hljs-type">MeViewController</span>()<br>        navigationController<span class="hljs-operator">?</span>.pushViewController(meVC, animated: <span class="hljs-literal">true</span>)<br>    &#125;<br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+看完以上代码，会不会感觉这和tabeview 很相似，实现了和tableview的无缝连接，我们会发现少了我们常用的一个API heightForRowAt , ASDK帮我们摆脱计算高度的烦恼，基于flex布局，ASDK内部进行高度处理。关于自定义cell，ASDK是基于block回调的方式创建cell，不需要cell重用，内部已实现。</li>
+<li>接下来介绍几个常用控件:<br>ASCollectionNode -&gt; UICollectionView<br>ASPagerNode -&gt; UIPageViewController<br>ASTableNode -&gt; UITableView<br>ASViewController     -&gt; UIViewController<br>ASNavigationControllerv -&gt; UINavigationController<br>ASTabBarController -&gt;UIKit的 UITabBarController<br>ASImageNode -&gt;UIImageView<br>ASTextNode     -&gt; UITextView</li>
+<li>自定义cell及布局方式在项目中的应用<figure class="highlight reasonml"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs reasonml">import AsyncDisplayKit<br><br><span class="hljs-keyword">class</span> WJCellNode: ASCellNode &#123;<br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">let</span> avatarNode = <span class="hljs-constructor">ASNetworkImageNode()</span><br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">let</span> titleNode = <span class="hljs-constructor">ASTextNode()</span><br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">let</span> subTitleNode = <span class="hljs-constructor">ASTextNode()</span><br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">let</span> timeNode = <span class="hljs-constructor">ASTextNode()</span><br>    <br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">let</span> hairlineNode = <span class="hljs-constructor">ASDisplayNode()</span><br>    <br>    init<span class="hljs-literal">()</span> &#123;<br>        super.init<span class="hljs-literal">()</span><br>        <br>        automaticallyManagesSubnodes = <span class="hljs-literal">true</span><br>        <br>        avatarNode.cornerRadius = <span class="hljs-number">4.0</span><br>        avatarNode.cornerRoundingType = .precomposited<br>        avatarNode.image = <span class="hljs-constructor">UIImage(<span class="hljs-params">named</span>: <span class="hljs-string">&quot;user_me&quot;</span>)</span><br><br>        titleNode.attributedText = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Common</span>.</span></span>attribute<span class="hljs-constructor">Title()</span><br>        titleNode.maximumNumberOfLines = <span class="hljs-number">1</span><br>        <br>        timeNode.attributedText = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Common</span>.</span></span>attribute<span class="hljs-constructor">Time()</span><br>        <br>        subTitleNode.attributedText = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Common</span>.</span></span>attribute<span class="hljs-constructor">SubTitle()</span><br>        subTitleNode.maximumNumberOfLines = <span class="hljs-number">1</span><br>        <br>        hairlineNode.backgroundColor = <span class="hljs-constructor">UIColor(<span class="hljs-params">white</span>: 0, <span class="hljs-params">alpha</span>: 0.15)</span><br>        hairlineNode.style.preferredSize = <span class="hljs-constructor">CGSize(<span class="hljs-params">width</span>: 9, <span class="hljs-params">height</span>: Constants.<span class="hljs-params">lineHeight</span>)</span><br>    &#125;<br>    <br>    override func did<span class="hljs-constructor">Load()</span> &#123;<br>        super.did<span class="hljs-constructor">Load()</span><br>        <br>    &#125;<br>    <br>    override func layout<span class="hljs-constructor">SpecThatFits(<span class="hljs-params">_</span> <span class="hljs-params">constrainedSize</span>: ASSizeRange)</span> -&gt; ASLayoutSpec &#123;<br>        avatarNode.style.preferredSize = <span class="hljs-constructor">CGSize(<span class="hljs-params">width</span>: 48.0, <span class="hljs-params">height</span>: 48.0)</span><br>        titleNode.style.flexGrow = <span class="hljs-number">1.0</span><br>        subTitleNode.style.flexGrow = <span class="hljs-number">1.0</span><br>        subTitleNode.style.flexShrink = <span class="hljs-number">1.0</span><br>        subTitleNode.style.spacingAfter = <span class="hljs-number">12</span><br>        timeNode.style.spacingAfter = <span class="hljs-number">16</span><br>        <br>        <span class="hljs-keyword">let</span> avatarLayout: ASLayoutSpec<br>        avatarLayout = <span class="hljs-constructor">ASInsetLayoutSpec(<span class="hljs-params">insets</span>: UIEdgeInsets(<span class="hljs-params">top</span>: 12, <span class="hljs-params">left</span>: 16, <span class="hljs-params">bottom</span>: 12, <span class="hljs-params">right</span>: 12)</span>, child: avatarNode)<br>        avatarLayout.style.preferredSize = <span class="hljs-constructor">CGSize(<span class="hljs-params">width</span>: 72.0, <span class="hljs-params">height</span>: 76.0)</span><br>        <br>        <span class="hljs-keyword">let</span> topStack = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ASStackLayoutSpec</span>.</span></span>horizontal<span class="hljs-literal">()</span><br>        topStack.alignItems = .center<br>        topStack.children = <span class="hljs-literal">[<span class="hljs-identifier">titleNode</span>, <span class="hljs-identifier">timeNode</span>]</span>        <br>        var bottomElements: <span class="hljs-literal">[ASL<span class="hljs-identifier">ayoutElement</span>]</span> = <span class="hljs-literal">[]</span><br>        bottomElements.append(subTitleNode)<br>        <span class="hljs-keyword">let</span> bottomStack = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ASStackLayoutSpec</span>.</span></span>horizontal<span class="hljs-literal">()</span><br>        bottomStack.children = bottomElements<br>        <br>        <span class="hljs-keyword">let</span> stack = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ASStackLayoutSpec</span>.</span></span>vertical<span class="hljs-literal">()</span><br>        stack.style.flexGrow = <span class="hljs-number">1.0</span><br>        stack.style.flexShrink = <span class="hljs-number">1.0</span><br>        stack.spacing = <span class="hljs-number">6</span><br>        stack.children = <span class="hljs-literal">[<span class="hljs-identifier">topStack</span>, <span class="hljs-identifier">bottomStack</span>]</span><br>        <br>        <span class="hljs-keyword">let</span> layout = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ASStackLayoutSpec</span>.</span></span>horizontal<span class="hljs-literal">()</span><br>        layout.alignItems = .center<br>        layout.children = <span class="hljs-literal">[<span class="hljs-identifier">avatarLayout</span>, <span class="hljs-identifier">stack</span>]</span><br>        layout.style.preferredSize = <span class="hljs-constructor">CGSize(<span class="hljs-params">width</span>: Constants.<span class="hljs-params">screenWidth</span>, <span class="hljs-params">height</span>: 72)</span><br>        <br>        <span class="hljs-keyword">let</span> absLayout = <span class="hljs-constructor">ASAbsoluteLayoutSpec(<span class="hljs-params">children</span>: [<span class="hljs-params">layout</span>, <span class="hljs-params">hairlineNode</span>])</span><br>        hairlineNode.style.layoutPosition = <span class="hljs-constructor">CGPoint(<span class="hljs-params">x</span>: 76, <span class="hljs-params">y</span>: 72 - Constants.<span class="hljs-params">lineHeight</span>)</span><br>        hairlineNode.style.preferredSize = <span class="hljs-constructor">CGSize(<span class="hljs-params">width</span>: Constants.<span class="hljs-params">screenWidth</span> - 76, <span class="hljs-params">height</span>: Constants.<span class="hljs-params">lineHeight</span>)</span><br>        return absLayout<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>Socket.IO-Client-Swift的使用方式</p>
+</blockquote>
+<figure class="highlight swift"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">import</span> UIKit<br><span class="hljs-keyword">import</span> SocketIO<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">typealias</span> success <span class="hljs-operator">=</span> (<span class="hljs-keyword">_</span> json: <span class="hljs-type">String</span>) -&gt; <span class="hljs-type">Void</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">typealias</span> fail <span class="hljs-operator">=</span> (<span class="hljs-keyword">_</span> json: <span class="hljs-type">String</span>) -&gt; <span class="hljs-type">Void</span><br><span class="hljs-keyword">let</span> user:<span class="hljs-type">User</span> <span class="hljs-operator">=</span> <span class="hljs-type">WJDBMannager</span>.getUser()<br><span class="hljs-keyword">let</span> manager <span class="hljs-operator">=</span> <span class="hljs-type">SocketManager</span>(socketURL: <span class="hljs-type">URL</span>(string: <span class="hljs-type">Constants</span>.base_Url)<span class="hljs-operator">!</span>, config: [.log(<span class="hljs-literal">true</span>), .connectParams([<span class="hljs-string">&quot;token&quot;</span>:user.<span class="hljs-type">Token</span> <span class="hljs-operator">??</span> <span class="hljs-string">&quot;&quot;</span>])])<br><span class="hljs-keyword">var</span> socket <span class="hljs-operator">=</span> manager.defaultSocket<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CornerSocketManager</span> </span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">connectWithToken</span>(<span class="hljs-params">token</span>:<span class="hljs-type">String</span>,<span class="hljs-params">success</span>: <span class="hljs-keyword">@escaping</span> success,<span class="hljs-params">fail</span>: <span class="hljs-keyword">@escaping</span> fail)</span> &#123;<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;++++++++++++++++++++++++++++++++++++++++++&quot;</span>)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;token==&quot;</span>,token)<br><br>        socket.on(clientEvent: .connect) &#123;data, ack <span class="hljs-keyword">in</span><br>            success(<span class="hljs-string">&quot;连接成功...&quot;</span>)<br>        &#125;<br>        socket.connect(timeoutAfter: <span class="hljs-number">15</span>, withHandler: &#123;<br>            fail(<span class="hljs-string">&quot;连接超时...&quot;</span>)<br>        &#125;)<br>        socket.connect()<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<ul>
+<li>消息的发送<figure class="highlight haskell"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs haskell"> <span class="hljs-keyword">let</span> bodies:[<span class="hljs-type">String</span>:<span class="hljs-type">String</span>] = [<br>            <span class="hljs-string">&quot;latitude&quot;</span>:<span class="hljs-string">&quot;0&quot;</span>,<br>            <span class="hljs-string">&quot;longitude&quot;</span>:<span class="hljs-string">&quot;0&quot;</span>,<br>            <span class="hljs-string">&quot;msg&quot;</span>:<span class="hljs-string">&quot;消息消息消息消息&quot;</span>,<br>            <span class="hljs-string">&quot;type&quot;</span>:<span class="hljs-string">&quot;txt&quot;</span><br>        ]<br>        <span class="hljs-keyword">let</span> params:[<span class="hljs-type">String</span>:<span class="hljs-type">Any</span>] = [<br>            <span class="hljs-string">&quot;chat_type&quot;</span>:<span class="hljs-string">&quot;chat&quot;</span>,<br>            <span class="hljs-string">&quot;from_user&quot;</span>:<span class="hljs-string">&quot;xu&quot;</span>,<br>            <span class="hljs-string">&quot;to_user&quot;</span>:<span class="hljs-string">&quot;xu&quot;</span>,<br>            <span class="hljs-string">&quot;type&quot;</span>:<span class="hljs-string">&quot;0&quot;</span>,<br>            <span class="hljs-string">&quot;bodies&quot;</span>:bodies<br>        ]<br>// 消息发送 根据发送的参数<span class="hljs-class"><span class="hljs-keyword">type</span>类型确定是文本消息、定位、图片、视频流以及发送方</span><br><span class="hljs-title">socket</span>.emitWithAck(<span class="hljs-string">&quot;chat&quot;</span>, params).timingOut(after: <span class="hljs-number">20</span>) &#123;<span class="hljs-class"><span class="hljs-keyword">data</span> in</span><br>         print(<span class="hljs-string">&quot;结果返回==&quot;</span>,<span class="hljs-class"><span class="hljs-keyword">data</span>)      </span><br> &#125;        <br></code></pre></div></td></tr></table></figure></li>
+<li>node端消息模块的处理<figure class="highlight typescript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs typescript"><span class="hljs-keyword">var</span> chat = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">io</span>) </span>&#123;<br>        io.on(<span class="hljs-string">&#x27;connection&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">socket</span>) </span>&#123;<br>            <span class="hljs-keyword">var</span> token = socket.handshake.query.auth_token;<br>            <span class="hljs-keyword">var</span> userName = vfglobal.token_Map[token];<br>            socket.broadcast.emit(<span class="hljs-string">&#x27;onArr&#x27;</span>, &#123;<span class="hljs-string">&#x27;user&#x27;</span>: userName&#125;);<br>            vfglobal.socket_Map[userName] = socket;<br>            vfGroupUser.findAll(userName, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>&#123;<br>                data.findIndex(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">T, <span class="hljs-built_in">number</span>, data</span>) </span>&#123;<br>                    socket.join(T.group_name);<br>                &#125;);<br>                <br>            &#125;);<br>            socket.on(<span class="hljs-string">&#x27;chat&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">message, callback</span>) </span>&#123;<br>                <br>                <span class="hljs-keyword">var</span> messageBody = message.bodies;<br>                <span class="hljs-keyword">if</span> (messageBody.type == <span class="hljs-string">&#x27;image&#x27;</span>) &#123;<br>                    <span class="hljs-keyword">var</span> imageBuffer = messageBody.fileData;<br>                    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;imageBuffer==&#x27;</span>,imageBuffer)<br>                    <span class="hljs-keyword">var</span> imageName = messageBody.fileName;<br>                    <span class="hljs-keyword">var</span> imageType = path.extname(imageName);<br>                    <span class="hljs-keyword">var</span> uuid = vfglobal.util.generateUUID();<br>                    <span class="hljs-keyword">var</span> newImageName = uuid + imageType;<br>                    <span class="hljs-keyword">var</span> savePath = <span class="hljs-string">&quot;./public/images/chatImages/&quot;</span> + newImageName;<br>                    imageScale = <span class="hljs-number">1</span>;<br>                    <span class="hljs-keyword">var</span> width = <span class="hljs-number">200</span>;<br>                    <span class="hljs-keyword">var</span> height = <span class="hljs-number">300</span>;<br>                    <br>                    fs.writeFile(savePath, imageBuffer, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err</span>) </span>&#123;<br>                        <span class="hljs-keyword">if</span>(err) &#123;vfglobal.MyLog(err)&#125;<br>                        <span class="hljs-keyword">else</span> &#123;<br>                            message.bodies.size = &#123;<span class="hljs-string">&#x27;width&#x27;</span> : <span class="hljs-number">200</span>, <span class="hljs-string">&#x27;height&#x27;</span> : <span class="hljs-number">300</span>&#125;;<br>                            message.bodies.fileRemotePath = <span class="hljs-string">&quot;images/chatImages/&quot;</span> + newImageName;<br>                            message.bodies.fileData = <span class="hljs-literal">null</span>;<br>                            <span class="hljs-keyword">if</span> (imageScale == <span class="hljs-number">1</span>) &#123;<br>                                message.bodies.thumbnailRemotePath = message.bodies.fileRemotePath;<br>                                sendMessage(message, callback, imageBuffer);<br>                            &#125;<br>                            <span class="hljs-keyword">else</span>  &#123;<br>                                <span class="hljs-keyword">var</span> index = imageName.indexOf(<span class="hljs-string">&#x27;.&#x27;</span>);<br>                                <span class="hljs-keyword">var</span> length = imageName.length;<br>                                <span class="hljs-keyword">var</span> <span class="hljs-keyword">type</span> = imageName.substring(index + <span class="hljs-number">1</span>, length);<br>                                gm(imageBuffer)<br>                                    .resize(width, height)<br>                                    .toBuffer(<span class="hljs-keyword">type</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err, buffer</span>) </span>&#123;<br>                                        fs.writeFile(<span class="hljs-string">&quot;./public/images/chatImages/s_&quot;</span> + newImageName, buffer, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>&#123;<br>                                            <br>                                            <span class="hljs-keyword">if</span> (!err) &#123;<br>                                                message.bodies.thumbnailRemotePath = <span class="hljs-string">&quot;images/chatImages/s_&quot;</span> + newImageName;<br>                                                sendMessage(message, callback, buffer);<br>                                            &#125;<br>                                        &#125;)<br>                                    &#125;);<br>                            &#125;<br>                        &#125;<br>                    &#125;);<br>                &#125;<br>                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (messageBody.type == <span class="hljs-string">&#x27;video&#x27;</span>) &#123;<br>                    <span class="hljs-keyword">var</span> audioBuffer = messageBody.fileData;<br>                    <span class="hljs-keyword">var</span> audioName = messageBody.fileName;<br>                    <span class="hljs-keyword">var</span> audioType = path.extname(audioName);<br>                    <span class="hljs-keyword">var</span> uuid = vfglobal.util.generateUUID();<br>                    <span class="hljs-keyword">var</span> newAudioName = uuid + audioType;<br>                    fs.writeFile(<span class="hljs-string">&quot;./public/video/&quot;</span> + newAudioName, audioBuffer, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err</span>) </span>&#123;<br>                        <span class="hljs-keyword">if</span> (err)&#123;&#125; <span class="hljs-keyword">else</span> &#123;<br>                            message.bodies.fileRemotePath = <span class="hljs-string">&quot;video/&quot;</span> + newAudioName;<br>                            message.bodies.fileData = <span class="hljs-literal">null</span>;<br>                            sendMessage(message, callback);<br>                        &#125;<br>                    &#125;)<br>                &#125;<br>                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(messageBody.type == <span class="hljs-string">&#x27;location&#x27;</span>) &#123;<br>                    <span class="hljs-keyword">var</span> url = <span class="hljs-string">&#x27;高德地图API&#x27;</span><br>                    request.GetRequest(url, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">err, res</span>) </span>&#123;<br>                        <span class="hljs-keyword">if</span> (err) &#123;&#125; <span class="hljs-keyword">else</span> &#123;<br>                            <span class="hljs-keyword">var</span> imgData = <span class="hljs-string">&#x27;&#x27;</span>;<br>                            <span class="hljs-keyword">var</span> contentType = res.headers[<span class="hljs-string">&#x27;content-type&#x27;</span>];<br>                            <span class="hljs-keyword">var</span> isBackImg = contentType.indexOf(<span class="hljs-string">&quot;image&quot;</span>) &gt;= <span class="hljs-number">0</span>;<br>                            res.on(<span class="hljs-string">&quot;data&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">chunk</span>) </span>&#123;<br>                                imgData += chunk;<br>                            &#125;);<br>                            <br>                            res.on(<span class="hljs-string">&quot;end&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123;<br>                                <span class="hljs-keyword">if</span> (isBackImg) &#123;<br>                                    <span class="hljs-keyword">var</span> uuid = vfglobal.util.generateUUID();<br>                                    <span class="hljs-keyword">var</span> imageFileName = uuid + <span class="hljs-string">&#x27;.PNG&#x27;</span>;<br>                                    fs.writeFile(<span class="hljs-string">&quot;./public/images/mapImages/&quot;</span> + imageFileName, imgData, <span class="hljs-string">&quot;binary&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err</span>)</span>&#123;<br>                                        <span class="hljs-keyword">if</span>(err)&#123;&#125;<span class="hljs-keyword">else</span> &#123;<br>                                            message.bodies.fileRemotePath = <span class="hljs-string">&quot;images/mapImages/&quot;</span> + imageFileName;<br>                                            sendMessage(message, callback);<br>                                        &#125;<br>                                        <br>                                    &#125;);<br>                                &#125;<br>                            &#125;);<br>                        &#125;<br>                    &#125;);<br>                &#125;<br>            &#125;);<br>        &#125;);<br>    &#125;<br>    <br></code></pre></div></td></tr></table></figure></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%A7%BB%E5%8A%A8%E7%AB%AF/">移动端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/swift/">swift</a>
+                    
+                      <a class="hover-with-bg" href="/tags/oc/">oc</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/10/06/mahout/mahout1/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Mahout 个性化推荐系统</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/02/06/linux/linux2/">
+                        <span class="hidden-mobile">Linux下常用命令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="/img/qrcode/weixin.png" srcset="/img/loading.gif" lazyload class="rounded mx-auto d-block mt-5" style="width:360px; height:360x;">
+    </div>
+  </div>
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+    
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

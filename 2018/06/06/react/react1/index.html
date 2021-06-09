@@ -1,0 +1,474 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="1234567891011121 获取state数据2 获取JSX模版 (引入react 来识别和渲染JSX语法，render返回值就是输出JSX语法，把JSX转成JS执行)3 数据 + 模版结合 生成虚拟DOM（就是一个JS对象，用来描述真实DOM，性能损耗极小） 4 用虚拟DOM结构， 生成真实的DOM（性能损耗比较大） ，显示到浏览器5 state发生变化，render重新调用，组件被重新渲">
+  <meta name="author" content="徐文俊">
+  <meta name="keywords" content="">
+  
+  <title>React基础 - 徐文俊的博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"wenjun-xu.github.io","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":1},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>徐文俊的博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                目录
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                个人主页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                链接
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://github.com/wenjun-xu">
+                    
+                    Github
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://www.jianshu.com/u/a0a166a4fbd6">
+                    
+                    简书
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="React基础">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      徐文俊
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2018-06-06 09:23" pubdate>
+        2018年6月6日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.7k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      20
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">React基础</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：6 天前
+                
+              </p>
+            
+            <div class="markdown-body">
+              <figure class="highlight pf"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pf"><span class="hljs-number">1</span> 获取<span class="hljs-keyword">state</span>数据<br><span class="hljs-number">2</span> 获取JSX模版 (引入react 来识别和渲染JSX语法，render返回值就是输出JSX语法，把JSX转成JS执行)<br><span class="hljs-number">3</span> 数据 + 模版结合 生成虚拟DOM（就是一个JS对象，用来描述真实DOM，性能损耗极小） <br><span class="hljs-number">4</span> 用虚拟DOM结构， 生成真实的DOM（性能损耗比较大） ，显示到浏览器<br><span class="hljs-number">5</span> <span class="hljs-keyword">state</span>发生变化，render重新调用，组件被重新渲染。<br><br><span class="hljs-number">6</span> 数据+模版 生成新的虚拟DOM（极大提升了性能）<br><span class="hljs-number">7</span> 比较原始虚拟DOM和新的虚拟DOM区别（同层比对），找到改变的元素（比较的方式叫Diff算法）<br><span class="hljs-number">8</span> 直接操作DOM，改变元素中的内容<br>总结：JSX-&gt;createElement-&gt;虚拟DOM（JS对象）-&gt;真实DOM<br>组件显示的结果是由组件的render函数返回的结果决定的<br>组件必须以大写字母开头，以小写字母开头 一般是原始的H5标签<br></code></pre></div></td></tr></table></figure>
+<span id="more"></span>
+
+<p>#####虚拟DOM优点：</p>
+<figure class="highlight basic"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs basic"><span class="hljs-symbol">1 </span>性能提升了 将DOM的比对转化为JS对象的比对<br><span class="hljs-symbol">2 </span>它使得跨端应用得以实现，（JS对象在原生应用也可以识别，将虚拟DOM（JS对象）转化为原生的组件）<br></code></pre></div></td></tr></table></figure>
+<h5 id="Diff算法："><a href="#Diff算法：" class="headerlink" title="Diff算法："></a>Diff算法：</h5><figure class="highlight basic"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs basic"><span class="hljs-symbol">1 </span>同层比对，算法简单，比对速度快，如果同层不一致，下层就不会在比对了，用新的元素替换老的,提升性能<br><span class="hljs-symbol">2 </span>setState为异步，将多次setState结合成一次setState，减少虚拟DOM比对的次数，优化性能<br><span class="hljs-symbol">3 </span>react中引入<span class="hljs-keyword">key</span>值，为了提升虚拟DOM的性能<br></code></pre></div></td></tr></table></figure>
+<h5 id="组件之间的数据传递通过属性的方式传值-获取通过this-props"><a href="#组件之间的数据传递通过属性的方式传值-获取通过this-props" class="headerlink" title="组件之间的数据传递通过属性的方式传值 获取通过this.props"></a>组件之间的数据传递通过属性的方式传值 获取通过this.props</h5><ul>
+<li>AAA.js文件<figure class="highlight scala"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs scala"><span class="hljs-keyword">import</span> <span class="hljs-type">React</span> from <span class="hljs-symbol">&#x27;reac</span>t&#x27;<br><span class="hljs-keyword">import</span> <span class="hljs-type">BBB</span> from <span class="hljs-string">&quot;./BBB&quot;</span>;<br>export <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AAA</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span></span>&#123;<br>    render() &#123;<br>        <span class="hljs-keyword">return</span> (<br>            &lt;div&gt;<br>                &lt;<span class="hljs-type">BBB</span> data=<span class="hljs-symbol">&#x27;hell</span>o&#x27;/&gt;<br>            &lt;/div&gt;<br>        );<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure></li>
+<li>BBB.js文件<figure class="highlight scala"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs scala"><span class="hljs-keyword">import</span> <span class="hljs-type">React</span> from <span class="hljs-symbol">&#x27;reac</span>t&#x27;<br>export <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BBB</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span></span>&#123;<br>    render() &#123;<br>        const &#123;data&#125; = <span class="hljs-keyword">this</span>.props<br>        <span class="hljs-keyword">return</span> (<br>            &lt;div&gt;<br>                &#123;data&#125;<br>            &lt;/div&gt;<br>        );<br>    &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+<h5 id="react单向数据流"><a href="#react单向数据流" class="headerlink" title="react单向数据流"></a>react单向数据流</h5><figure class="highlight pf"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pf">props只读属性,一般通过改变<span class="hljs-keyword">state</span>，从而改变props的值。<br>子组件可以接收父组件的数据，不可以直接改变父组件数据。想改变的话，需要通过父组件的函数。<br></code></pre></div></td></tr></table></figure>
+#####react 是一个视图层框架</li>
+<li>react只负责视图层内容，大型项目还需数据层框架等的支持。因为当复杂的组件关系之间，需要传递数据，react会非常麻烦。<h5 id="react调试工具的安装"><a href="#react调试工具的安装" class="headerlink" title="react调试工具的安装"></a>react调试工具的安装</h5></li>
+<li>Chrome-&gt;更多工具-&gt;扩展程序-&gt;React Developer tool</li>
+<li>打开chrome浏览器 多了一个react查看工具 实时查看组件内部的state变化<h5 id="react-组件的生命周期函数"><a href="#react-组件的生命周期函数" class="headerlink" title="react 组件的生命周期函数"></a>react 组件的生命周期函数</h5><figure class="highlight delphi"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs delphi">定义: 在某一个时刻会自动调用执行的函数<br>初始化 <br>    <span class="hljs-function"><span class="hljs-keyword">constructor</span> -- <span class="hljs-title">props</span> <span class="hljs-title">state</span></span><br><span class="hljs-function">组件被挂载：</span><br><span class="hljs-function">    <span class="hljs-title">componentWillMount</span> -- 组件即将被挂载到页面，在<span class="hljs-title">render</span>之前被执行</span><br><span class="hljs-function">    <span class="hljs-title">componentDidMount</span> -- 组件已经被挂载到页面，在<span class="hljs-title">render</span>之后执行</span><br><span class="hljs-function">组件更新：</span><br><span class="hljs-function">    <span class="hljs-title">componentWillReceiveProps</span> -- 从父组件接收了参数，并且这个组件之前已经存在于父组件才会执行，如果是第一次存在于父组件，不会执行</span><br><span class="hljs-function">    <span class="hljs-title">shouldComponentUpdate</span> -- 组件被更新之前，自动执行</span><br><span class="hljs-function">    <span class="hljs-title">componentWillUpdate</span> -- 组件被更新之前，在<span class="hljs-title">shouldComponentUpdate</span>之后，如果<span class="hljs-title">shouldComponentUpdate</span>返回<span class="hljs-title">false</span> ，不执行</span><br><span class="hljs-function">    <span class="hljs-title">render</span> - 重新渲染虚拟<span class="hljs-title">DOM</span></span><br><span class="hljs-function">    <span class="hljs-title">componentDidUpdate</span> -- 组件更新完成之后被执行</span><br><span class="hljs-function">组件从页面去除：</span><br><span class="hljs-function">    <span class="hljs-title">componentWillUnmount</span> -- 当组件即将从页面中移除</span><br><span class="hljs-function">注意：</span><br><span class="hljs-function">    所有的生命周期函数可以不写，唯独<span class="hljs-title">render</span>函数必须写，因为<span class="hljs-title">react</span>底层里写了其他函数，没有加入<span class="hljs-title">render</span>函数</span><br></code></pre></div></td></tr></table></figure>
+<h5 id="react-项目性能提升："><a href="#react-项目性能提升：" class="headerlink" title="react 项目性能提升："></a>react 项目性能提升：</h5><figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk"><span class="hljs-number">1</span> this.handleClick 作用域的修改放到constructor 整个作用域的绑定只会执行一次，避免子组件的渲染。<br><span class="hljs-number">2</span> setState 底层为异步，将多次setState结合成一次setState，减少虚拟DOM比对的次数，优化性能<br><span class="hljs-number">3</span> react底层用了虚拟DOM，同层比对，key值，提升性能<br><span class="hljs-number">4</span> shouldComponentUpdate 当组件的值没有改变时，不进行render渲染，提升组件性能 <br><span class="hljs-number">5</span> 网络请求约定放在componentDidMount里面 只加载一次<br><span class="hljs-number">6</span> 如果一个组件只有一个render函数，使用无状态组件<br><br><span class="hljs-comment">### 渲染相关</span><br><br>*   提升级项目性能，请使用immutable(props、state、store)<br>*   请pure-render-decorator与immutablejs搭配使用<br>*   请慎用setState，因其容易导致重新渲染<br>*   谨慎将component当作props传入<br>*   请将方法的bind一律置于constructor<br>*   请只传递component需要的props，避免其它props变化导致重新渲染（慎用spread attributes）<br>*   请在你希望发生重新渲染的dom上设置可被react识别的同级唯一key，否则react在某些情况可能不会重新渲染。<br>*   请尽量使用const element<br><br><span class="hljs-comment">### tap事件</span><br><br>*   简单的tap事件，请使用react-tap-event-plugin<br>    开发环境时，最好引入webpack的环境变量（仅在开发环境中初始化），在container中初始化。生产环境的时候，请将plugin跟react打包到一起（需要打包在一起才能正常使用，因为plugin对react有好多依赖），外链引入。<br><br>目前参考了这个项目的打包方案：<br>[https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/hartmamt/</span>react-with-tap-events](https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/hartmamt/</span>react-with-tap-events)<br>Facebook官方issue: [https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/facebook/</span>react<span class="hljs-regexp">/blob/</span>bef45b0b1a98ea9b472ba664d955a039cf2f8068<span class="hljs-regexp">/src/</span>renderers<span class="hljs-regexp">/dom/</span>client<span class="hljs-regexp">/eventPlugins/</span>TapEventPlugin.js](https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/facebook/</span>react<span class="hljs-regexp">/blob/</span>bef45b0b1a98ea9b472ba664d955a039cf2f8068<span class="hljs-regexp">/src/</span>renderers<span class="hljs-regexp">/dom/</span>client<span class="hljs-regexp">/eventPlugins/</span>TapEventPlugin.js)<br>React-tap-event-plugin github:<br>[https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/zilverline/</span>react-tap-event-plugin](https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/zilverline/</span>react-tap-event-plugin)<br><br>*   复杂的tap事件，建议使用tap component<br>    家校群列表页的每个作业的tap交互都比较复杂，出了普通的tap之外，还需要long tap和swipe。因此我们只好自己封装了一个tap component<br><br><span class="hljs-comment">### Debug相关</span><br><br>*   移动端请慎用redux-devtools，易造成卡顿<br>*   Webpack慎用devtools的inline-source-map模式<br>    使用此模式会内联一大段便于定位bug的字符串，查错时可以开启，不是查错时建议关闭，否则开发时加载的包会非常大。<br><br><span class="hljs-comment">### 其它</span><br><br>*   慎用太新的es6语法。<br>    Object.assign等较新的类库避免在移动端上使用，会报错。<br>    Object.assign目前使用object-assign包。或者使用babel-plugin-transform-object-assign插件。会转换成一个extends的函数：<br><br>*   注意Object.assign是浅拷贝<br>    Object.assign是浅拷贝，若数据结构层次较深的时候会拷贝失败，直接回传原本的object reference，此处推荐lodash.merge。<br><br>如有错误，请斧正！<br><br></code></pre></div></td></tr></table></figure>
+<h5 id="无状态组件"><a href="#无状态组件" class="headerlink" title="无状态组件"></a>无状态组件</h5><figure class="highlight mel"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs mel">如果一个组件只有一个<span class="hljs-keyword">render</span>函数，只负责页面渲染，没有去做任何逻辑操作，可以使用无状态组件去定义一个组件<br>使用函数式的方式声明，会使得代码的可读性更好，并能大大减少代码量，性能更好<br></code></pre></div></td></tr></table></figure>
+<h5 id="样式引入组件-styled-components-防止全局生效"><a href="#样式引入组件-styled-components-防止全局生效" class="headerlink" title="样式引入组件 styled-components(防止全局生效)"></a>样式引入组件 styled-components(防止全局生效)</h5></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/React/">React</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/06/08/react/react2/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">react-router基础知识</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2017/08/06/swift/swift2/">
+                        <span class="hidden-mobile">iOS APP怎样做更安全</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="/img/qrcode/weixin.png" srcset="/img/loading.gif" lazyload class="rounded mx-auto d-block mt-5" style="width:360px; height:360x;">
+    </div>
+  </div>
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+    
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

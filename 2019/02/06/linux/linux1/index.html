@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;light&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="###远程服务器连接
+
+ ######关于服务器的连接，windows下可以选择Xshell、SecureCRT、Putty 等，Mac下可以选择SecureCRT 、FinallShell等。在这里我通过mac终端连接阿里云的Linux服务器(CentOS)。#####1.  切换到root权限下 
+">
+  <meta name="author" content="徐文俊">
+  <meta name="keywords" content="">
+  
+  <title>Linux下node环境搭建 - 徐文俊的博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"wenjun-xu.github.io","root":"/","version":"1.8.11","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":1},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>徐文俊的博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                目录
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                个人主页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-books"></i>
+                链接
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://github.com/wenjun-xu">
+                    
+                    Github
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" target="_blank" rel="noopener" href="https://www.jianshu.com/u/a0a166a4fbd6">
+                    
+                    简书
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Linux下node环境搭建">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      徐文俊
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-02-06 09:23" pubdate>
+        2019年2月6日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.5k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      45
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Linux下node环境搭建</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：6 天前
+                
+              </p>
+            
+            <div class="markdown-body">
+              <p><img src="https://upload-images.jianshu.io/upload_images/6852952-83f5e0aeab403060.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" lazyload alt="user.png"><br>###<em>远程服务器连接</em></p>
+<blockquote>
+<p> ######关于服务器的连接，windows下可以选择Xshell、SecureCRT、Putty 等，Mac下可以选择SecureCRT 、FinallShell等。在这里我通过mac终端连接阿里云的Linux服务器(CentOS)。<br>#####1.  切换到root权限下 </p>
+</blockquote>
+<span id="more"></span>
+<ul>
+<li>sudo -I<br>####2.   通过ssh连接linux服务器，根据提示输入远程服务器密码</li>
+<li>ssh <a href="mailto:&#x72;&#x6f;&#111;&#116;&#64;&#x69;&#112;&#116;&#101;&#115;&#x74;&#46;&#99;&#111;&#x6d;">&#x72;&#x6f;&#111;&#116;&#64;&#x69;&#112;&#116;&#101;&#115;&#x74;&#46;&#99;&#111;&#x6d;</a><figure class="highlight apache"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs apache"><span class="hljs-attribute">bogon</span>:~ xuqingbiao$ sudo -I<br><span class="hljs-attribute">Password</span>:<br><span class="hljs-attribute">bogon</span>:~ root# ssh root@iptest.com<br><span class="hljs-attribute">root</span>@iptest.com&#x27;s password:<br><span class="hljs-attribute">Last</span> failed login: Thu Mar <span class="hljs-number">21</span> <span class="hljs-number">09</span>:<span class="hljs-number">49</span>:<span class="hljs-number">14</span> CST <span class="hljs-number">2019</span> from <span class="hljs-number">114.113.64.173</span> <span class="hljs-literal">on</span> ssh:notty<br><span class="hljs-attribute">There</span> was <span class="hljs-number">1</span> failed login attempt since the last successful login.<br><span class="hljs-attribute">Last</span> login: Thu Mar <span class="hljs-number">21</span> <span class="hljs-number">09</span>:<span class="hljs-number">07</span>:<span class="hljs-number">38</span> <span class="hljs-number">2019</span> from <span class="hljs-number">114.113.64.173</span><br><span class="hljs-attribute">Welcome</span> to Alibaba Cloud Elastic Compute Service !<br></code></pre></div></td></tr></table></figure>
+至此，连接远程服务器成功。<br>#####3.  介绍几个常用的命令<figure class="highlight gauss"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs gauss"> <span class="hljs-number">1</span> mac上传文件到Linux服务器<br>    scp /Users/xuqingbiao/demo root<span class="hljs-comment">@iptest.com:/work</span><br><span class="hljs-comment"> 2 mac上传文件夹到Linux服务器</span><br><span class="hljs-comment">    scp -r /Users/xuqingbiao/demo root@</span>iptest.com:/work<br> <span class="hljs-number">3</span> Linux服务器下载文件到mac<br>    scp root<span class="hljs-comment">@iptest.com:/work/demo /Users/xuqingbiao/</span><br><span class="hljs-comment"> 4 Linux服务器下载文件夹到mac</span><br><span class="hljs-comment">    scp -r root@</span>iptest.com:/work/demo /Users/xuqingbiao/ <br>远程连接失败时：<br><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@</span><br><span class="hljs-comment">@</span>    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     <span class="hljs-comment">@</span><br><span class="hljs-comment">@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><span class="hljs-comment">@@</span><br>IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!<br>Someone could be eavesdropping on you right <span class="hljs-built_in">now</span> (man-in-the-middle attack)!<br>It is also possible that a host <span class="hljs-built_in">key</span> has just been changed.<br>The fingerprint <span class="hljs-keyword">for</span> the RSA key sent by the remote host is<br>SHA256:febs6WhV+vyqocDpgParTocBLO92LCM4DgTAiHIQn7w.<br>Please contact your system administrator.<br>Add correct host key in /Users/xuqingbiao/.ssh/known_hosts to get rid of this message.<br>Offending ECDSA key in /Users/xuqingbiao/.ssh/known_hosts:2<br>RSA host key <span class="hljs-keyword">for</span> 47.105.181.201 has changed and you have requested strict checking.<br>Host key verification failed.<br>lost connection<br>删除/Users/xuqingbiao/.ssh/known_host目录下的缓存<br>或者<br>ssh-keygen -R IP地址<br></code></pre></div></td></tr></table></figure>
+###<em>node环境搭建</em><br>#####1.  配置npm的源</li>
+<li>curl –silent –location <a target="_blank" rel="noopener" href="https://rpm.nodesource.com/setup_8.x">https://rpm.nodesource.com/setup_8.x</a> | bash -<figure class="highlight clean"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs clean">[root@iZm5e33l0ge76uqi8nq87aZ ~]# curl --silent --location https:<span class="hljs-comment">//rpm.nodesource.com/setup_8.x | bash -</span><br>## Installing the NodeSource Node.js <span class="hljs-number">8.</span>x LTS Carbon repo...<br>## Inspecting <span class="hljs-keyword">system</span>...<br>+ rpm -q --whatprovides redhat-release || rpm -q --whatprovides centos-release || rpm -q --whatprovides cloudlinux-release || rpm -q --whatprovides sl-release<br>+ uname -m<br>## Confirming <span class="hljs-string">&quot;el7-x86_64&quot;</span> is supported...<br>+ curl -sLf -o /dev/null <span class="hljs-string">&#x27;https://rpm.nodesource.com/pub_8.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm&#x27;</span><br>## Downloading release setup RPM...<br>+ mktemp<br>+ curl -sL -o <span class="hljs-string">&#x27;/tmp/tmp.AIyIQvYadg&#x27;</span> <span class="hljs-string">&#x27;https://rpm.nodesource.com/pub_8.x/el/7/x86_64/nodesource-release-el7-1.noarch.rpm&#x27;</span><br>## Installing release setup RPM...<br>+ rpm -i --nosignature --force <span class="hljs-string">&#x27;/tmp/tmp.AIyIQvYadg&#x27;</span><br>## Cleaning up...<br>+ rm -f <span class="hljs-string">&#x27;/tmp/tmp.AIyIQvYadg&#x27;</span><br>## Checking for existing installations...<br>+ rpm -qa <span class="hljs-string">&#x27;node|npm&#x27;</span> | grep -v nodesource<br>## Run `sudo yum install -y nodejs` to install Node.js <span class="hljs-number">8.</span>x LTS Carbon and npm.<br>## You may also need development tools to build native addons:<br>     sudo yum install gcc-c++ make<br>## To install the Yarn package manager, run:<br>     curl -sL https:<span class="hljs-comment">//dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo</span><br>     sudo yum install yarn<br></code></pre></div></td></tr></table></figure>
+#####2.  根据提示运行 yum install -y nodejs</li>
+<li>yum install -y nodejs<figure class="highlight autoit"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs autoit">已安装:<br>  nodejs.x86_64 <span class="hljs-number">2</span>:<span class="hljs-number">8.15</span><span class="hljs-number">.1</span><span class="hljs-number">-1</span>nodesource                                                                   <br>完毕！<br>[root<span class="hljs-symbol">@iZm5e33l0ge76uqi8nq87aZ</span> ~]<span class="hljs-meta"># </span><br></code></pre></div></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs apache"><span class="hljs-attribute">Installed</span>:<br>  <span class="hljs-attribute">nodejs</span>.x<span class="hljs-number">86</span>_<span class="hljs-number">64</span> <span class="hljs-number">2</span>:<span class="hljs-number">8</span>.<span class="hljs-number">15</span>.<span class="hljs-number">1</span>-<span class="hljs-number">1</span>nodesource                                                                   Complete！<span class="hljs-meta"></span><br><span class="hljs-meta">[root@iZm5e33l0ge76uqi8nq87aZ ~]# </span><br></code></pre></div></td></tr></table></figure>
+#####3. 出现以上其一，node环境已经安装完成，检查node版本<figure class="highlight gcode"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs gcode">[root@iZ<span class="hljs-name">m5</span>e<span class="hljs-number">33</span>l<span class="hljs-number">0</span><span class="hljs-keyword">ge</span><span class="hljs-number">76</span>uqi<span class="hljs-number">8</span><span class="hljs-symbol">nq87</span>aZ ~]<span class="hljs-attr"># node -v</span><br><span class="hljs-attr">v8</span><span class="hljs-number">.15</span><span class="hljs-number">.1</span><br>[root@iZ<span class="hljs-name">m5</span>e<span class="hljs-number">33</span>l<span class="hljs-number">0</span><span class="hljs-keyword">ge</span><span class="hljs-number">76</span>uqi<span class="hljs-number">8</span><span class="hljs-symbol">nq87</span>aZ ~]<span class="hljs-attr"># </span><br></code></pre></div></td></tr></table></figure>
+#####4. 安装淘宝镜像</li>
+<li>npm install -g cnpm –registry=<a target="_blank" rel="noopener" href="https://registry.npm.taobao.org/">https://registry.npm.taobao.org</a><figure class="highlight gradle"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs gradle">[root@iZm5e33l0ge76uqi8nq87aZ ~]# npm install -g cnpm --registry=https:<span class="hljs-comment">//registry.npm.taobao.org</span><br>npm WARN deprecated socks@<span class="hljs-number">1.1</span>.<span class="hljs-number">10</span>: <span class="hljs-keyword">If</span> using <span class="hljs-number">2</span>.x branch, please upgrade to at least <span class="hljs-number">2.1</span>.<span class="hljs-number">6</span> to avoid a serious bug with socket data flow and an <span class="hljs-keyword">import</span> issue introduced in <span class="hljs-number">2.1</span>.<span class="hljs-number">0</span><br><span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/cnpm -&gt; /u</span>sr<span class="hljs-regexp">/lib/</span>node_modules<span class="hljs-regexp">/cnpm/</span>bin/cnpm<br>+ cnpm@<span class="hljs-number">6.0</span>.<span class="hljs-number">0</span><br>added <span class="hljs-number">679</span> packages <span class="hljs-keyword">from</span> <span class="hljs-number">898</span> contributors in <span class="hljs-number">15.191</span>s<br></code></pre></div></td></tr></table></figure>
+#####5. 安装express生成器工具</li>
+<li>cnpm install express-generator -g<figure class="highlight llvm"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs llvm">[root<span class="hljs-title">@iZm5e33l0ge76uqi8nq87aZ</span> ~]# cnpm install express-generator -g<br>Downloading express-generator <span class="hljs-keyword">to</span> /usr/lib/node_modules/express-generator_tmp<br>Copying /usr/lib/node_modules/express-generator_tmp/_express-generator<span class="hljs-title">@4</span>.<span class="hljs-number">16.0</span><span class="hljs-title">@express-generator</span> <span class="hljs-keyword">to</span> /usr/lib/node_modules/express-generator<br>Installing express-generator&#x27;s dependencies <span class="hljs-keyword">to</span> /usr/lib/node_modules/express-generator/node_modules<br>[<span class="hljs-number">1</span>/<span class="hljs-number">5</span>] commander<span class="hljs-title">@2</span>.<span class="hljs-number">13.0</span> installed at node_modules/_commander<span class="hljs-title">@2</span>.<span class="hljs-number">13.0</span><span class="hljs-title">@commander</span><br>[<span class="hljs-number">2</span>/<span class="hljs-number">5</span>] sorted-object<span class="hljs-title">@2</span>.<span class="hljs-number">0.1</span> installed at node_modules/_sorted-object<span class="hljs-title">@2</span>.<span class="hljs-number">0.1</span><span class="hljs-title">@sorted-object</span><br>[<span class="hljs-number">3</span>/<span class="hljs-number">5</span>] ejs<span class="hljs-title">@2</span>.<span class="hljs-number">5.7</span> installed at node_modules/_ejs<span class="hljs-title">@2</span>.<span class="hljs-number">5.7</span><span class="hljs-title">@ejs</span><br>[<span class="hljs-number">4</span>/<span class="hljs-number">5</span>] mkdirp<span class="hljs-title">@0</span>.<span class="hljs-number">5.1</span> installed at node_modules/_mkdirp<span class="hljs-title">@0</span>.<span class="hljs-number">5.1</span><span class="hljs-title">@mkdirp</span><br>[<span class="hljs-number">5</span>/<span class="hljs-number">5</span>] minimatch<span class="hljs-title">@3</span>.<span class="hljs-number">0.4</span> installed at node_modules/_minimatch<span class="hljs-title">@3</span>.<span class="hljs-number">0.4</span><span class="hljs-title">@minimatch</span><br>All packages installed (<span class="hljs-number">9</span> packages installed from npm registry<span class="hljs-punctuation">,</span> used <span class="hljs-number">412</span>ms(network <span class="hljs-number">409</span>ms)<span class="hljs-punctuation">,</span> speed <span class="hljs-number">240.39</span>kB/s<span class="hljs-punctuation">,</span> json <span class="hljs-number">9</span>(<span class="hljs-number">16.66</span>kB)<span class="hljs-punctuation">,</span> tarball <span class="hljs-number">81.66</span>kB)<br>[express-generator<span class="hljs-title">@4</span>.<span class="hljs-number">16.0</span>] link /usr/bin/express@ -&gt; /usr/lib/node_modules/express-generator/bin/express-cli.js<br></code></pre></div></td></tr></table></figure>
+#####6. 服务器下新建一个work文件夹，并在该文件夹下初始化一个express</li>
+<li>cd ..</li>
+<li>mkdir work</li>
+<li>express demo<figure class="highlight gradle"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs gradle"> create : demo/<br>   create : demo<span class="hljs-regexp">/public/</span><br>   create : demo<span class="hljs-regexp">/public/</span>javascripts/<br>   create : demo<span class="hljs-regexp">/public/im</span>ages/<br>   create : demo<span class="hljs-regexp">/public/</span>stylesheets/<br>   create : demo<span class="hljs-regexp">/public/</span>stylesheets/style.css<br>   create : demo<span class="hljs-regexp">/routes/</span><br>   create : demo<span class="hljs-regexp">/routes/i</span>ndex.js<br>   create : demo<span class="hljs-regexp">/routes/u</span>sers.js<br>   create : demo<span class="hljs-regexp">/views/</span><br>   create : demo<span class="hljs-regexp">/views/</span>error.jade<br>   create : demo<span class="hljs-regexp">/views/i</span>ndex.jade<br>   create : demo<span class="hljs-regexp">/views/</span>layout.jade<br>   create : demo/app.js<br>   create : demo/<span class="hljs-keyword">package</span>.json<br>   create : demo<span class="hljs-regexp">/bin/</span><br>   create : demo<span class="hljs-regexp">/bin/</span>www<br><br>   change directory:<br>     $ cd demo<br><br>   install <span class="hljs-keyword">dependencies</span>:<br>     $ npm install<br><br>   run the app:<br>     $ DEBUG=demo:* npm start<br><br>[root@iZm5e33l0ge76uqi8nq87aZ work]# ls<br></code></pre></div></td></tr></table></figure>
+#####7.安装对应的依赖</li>
+<li>cd demo</li>
+<li>cpm install<figure class="highlight autoit"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs autoit">[root<span class="hljs-symbol">@iZm5e33l0ge76uqi8nq87aZ</span> work]<span class="hljs-meta"># cd demo</span><br>[root<span class="hljs-symbol">@iZm5e33l0ge76uqi8nq87aZ</span> demo]<span class="hljs-meta"># cnpm install</span><br>✔ Installed <span class="hljs-number">6</span> packages<br>✔ Linked <span class="hljs-number">85</span> latest versions<br>✔ <span class="hljs-built_in">Run</span> <span class="hljs-number">0</span> scripts<br>deprecate jade@~<span class="hljs-number">1.11</span><span class="hljs-number">.0</span> Jade has been renamed <span class="hljs-keyword">to</span> pug, please install the latest version of pug instead of jade<br>deprecate jade<span class="hljs-symbol">@1</span><span class="hljs-number">.11</span><span class="hljs-number">.0</span> › constantinople@~<span class="hljs-number">3.0</span><span class="hljs-number">.1</span> Please update <span class="hljs-keyword">to</span> at least constantinople <span class="hljs-number">3.1</span><span class="hljs-number">.1</span><br>deprecate jade<span class="hljs-symbol">@1</span><span class="hljs-number">.11</span><span class="hljs-number">.0</span> › transformers<span class="hljs-symbol">@2</span><span class="hljs-number">.1</span><span class="hljs-number">.0</span> Deprecated, use jstransformer<br>✔ All packages installed (<span class="hljs-number">100</span> packages installed from npm registry, used <span class="hljs-number">2</span>s(network <span class="hljs-number">2</span>s), speed <span class="hljs-number">1.08</span>MB/s, json <span class="hljs-number">91</span>(<span class="hljs-number">213.77</span>kB), tarball <span class="hljs-number">1.59</span>MB)<br></code></pre></div></td></tr></table></figure>
+#####8. 启动应用</li>
+<li>DEBUG=demo:* npm start<figure class="highlight pgsql"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pgsql">[root@iZm5e33l0ge76uqi8nq87aZ demo]# <span class="hljs-keyword">DEBUG</span>=demo:* npm <span class="hljs-keyword">start</span><br><br>&gt; demo@<span class="hljs-number">0.0</span><span class="hljs-number">.0</span> <span class="hljs-keyword">start</span> /<span class="hljs-keyword">work</span>/demo<br>&gt; node ./bin/www<br><br>  demo:<span class="hljs-keyword">server</span> Listening <span class="hljs-keyword">on</span> port <span class="hljs-number">3000</span> +<span class="hljs-number">0</span>ms<br></code></pre></div></td></tr></table></figure>
+######9.打开浏览器，输入 Ip地址:3000 即可查看效果<br><img src="https://upload-images.jianshu.io/upload_images/6852952-d63f40a5bed6fd83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" lazyload alt="express.png"></li>
+</ul>
+<p>#####10. vim编辑器编辑users文件添加用户接口</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pgsql">var express = require(<span class="hljs-string">&#x27;express&#x27;</span>);<br>var router = express.Router();<br>var <span class="hljs-keyword">User</span> = require(<span class="hljs-string">&#x27;./user&#x27;</span>)<br>var URL = require(<span class="hljs-string">&#x27;url&#x27;</span>)<br><span class="hljs-comment">/* GET users listing. */</span><br>router.<span class="hljs-keyword">get</span>(<span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-keyword">function</span>(req, res, next) &#123;<br>  res.send(<span class="hljs-string">&#x27;respond with a resource&#x27;</span>);<br>&#125;);<br>router.<span class="hljs-keyword">get</span>(<span class="hljs-string">&#x27;/getUserInfo&#x27;</span>, <span class="hljs-keyword">function</span>(req, res, next) &#123;<br>  var <span class="hljs-keyword">user</span> = <span class="hljs-built_in">new</span> <span class="hljs-keyword">User</span>();<br>  var params = URL.parse(req.url, <span class="hljs-keyword">true</span>).query;<br>  <span class="hljs-keyword">if</span>(params.id == <span class="hljs-string">&#x27;1&#x27;</span>) &#123;<br>    <span class="hljs-keyword">user</span>.name = &quot;徐文俊&quot;;<br>    <span class="hljs-keyword">user</span>.age = &quot;18&quot;;<br>    <span class="hljs-keyword">user</span>.city = &quot;北京&quot;;<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-keyword">user</span>.name = &quot;Ms.xu&quot;;<br>    <span class="hljs-keyword">user</span>.age = &quot;2&quot;;<br>    <span class="hljs-keyword">user</span>.city = &quot;广东市&quot;;<br>  &#125;<br>  var response = &#123;status:<span class="hljs-number">1</span>,data:<span class="hljs-keyword">user</span>&#125;;<br>  res.send(<span class="hljs-type">JSON</span>.stringify(response))<br>&#125;);<br>module.exports = router;<br></code></pre></div></td></tr></table></figure>
+<p>#####11. 启动项目,打开浏览器，输入 Ip地址:3000/users/getUserInfo 即可查看效果<br><img src="https://upload-images.jianshu.io/upload_images/6852952-a2148ce84353fd23.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" srcset="/img/loading.gif" lazyload alt="user.png"><br>#####12. 安装pm2依赖</p>
+<ul>
+<li>cnpm install pm2 -g<figure class="highlight gradle"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs gradle">Recently updated (since <span class="hljs-number">2019</span>-<span class="hljs-number">03</span>-<span class="hljs-number">14</span>): <span class="hljs-number">1</span> packages (detail see <span class="hljs-keyword">file</span> <span class="hljs-regexp">/usr/</span>lib<span class="hljs-regexp">/node_modules/</span>pm2<span class="hljs-regexp">/node_modules/</span>.recently_updates.txt)<br>  <span class="hljs-number">2019</span>-<span class="hljs-number">03</span>-<span class="hljs-number">20</span><br>    → @pm2<span class="hljs-regexp">/io@4.1.2 › @pm2/</span>agent-node@<span class="hljs-number">1.1</span>.<span class="hljs-number">8</span> › proxy-agent@^<span class="hljs-number">3.0</span>.<span class="hljs-number">3</span>(<span class="hljs-number">3.1</span>.<span class="hljs-number">0</span>) (<span class="hljs-number">12</span>:<span class="hljs-number">11</span>:<span class="hljs-number">51</span>)<br>All packages installed (<span class="hljs-number">273</span> packages installed <span class="hljs-keyword">from</span> npm registry, <span class="hljs-number">1</span> packages installed <span class="hljs-keyword">from</span> remote url, used <span class="hljs-number">4</span>s(network <span class="hljs-number">4</span>s), speed <span class="hljs-number">1.46</span>MB/s, json <span class="hljs-number">235</span>(<span class="hljs-number">427.95</span>kB), tarball <span class="hljs-number">5.9</span>MB)<br>[pm2@<span class="hljs-number">3.4</span>.<span class="hljs-number">0</span>] link <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/pm2@ -&gt; /u</span>sr<span class="hljs-regexp">/lib/</span>node_modules<span class="hljs-regexp">/pm2/</span>bin/pm2<br>[pm2@<span class="hljs-number">3.4</span>.<span class="hljs-number">0</span>] link <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/pm2-dev@ -&gt; /u</span>sr<span class="hljs-regexp">/lib/</span>node_modules<span class="hljs-regexp">/pm2/</span>bin/pm2-dev<br>[pm2@<span class="hljs-number">3.4</span>.<span class="hljs-number">0</span>] link <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/pm2-docker@ -&gt; /u</span>sr<span class="hljs-regexp">/lib/</span>node_modules<span class="hljs-regexp">/pm2/</span>bin/pm2-docker<br>[pm2@<span class="hljs-number">3.4</span>.<span class="hljs-number">0</span>] link <span class="hljs-regexp">/usr/</span>bin<span class="hljs-regexp">/pm2-runtime@ -&gt; /u</span>sr<span class="hljs-regexp">/lib/</span>node_modules<span class="hljs-regexp">/pm2/</span>bin/pm2-<span class="hljs-keyword">runtime</span><br></code></pre></div></td></tr></table></figure>
+#####13. 执行相关任务</li>
+<li>pm2 startup systemd<br>#####14. 保存配置<br>pm2 save<br>#####15. cd到项目，pm2启动node项目<figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk">启动  pm2 start .<span class="hljs-regexp">/bin/</span>www<br>停止 pm2 stop all<br>重启 pm2 start -f .<span class="hljs-regexp">/bin/</span>www<br></code></pre></div></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pgsql">[root@iZm5e33l0ge76uqi8nq87aZ <span class="hljs-number">0321</span>node]# pm2 <span class="hljs-keyword">start</span> ./bin/www<br>[PM2] Starting /<span class="hljs-keyword">work</span>/<span class="hljs-number">0321</span>node/bin/www <span class="hljs-keyword">in</span> fork_mode (<span class="hljs-number">1</span> instance)<br>[PM2] Done.<br>┌──────────┬────┬─────────┬──────┬───────┬────────┬─────────┬────────┬─────┬───────────┬──────┬──────────┐<br>│ App <span class="hljs-type">name</span> │ id │ <span class="hljs-keyword">version</span> │ mode │ pid   │ status │ <span class="hljs-keyword">restart</span> │ uptime │ cpu │ mem       │ <span class="hljs-keyword">user</span> │ watching │<br>├──────────┼────┼─────────┼──────┼───────┼────────┼─────────┼────────┼─────┼───────────┼──────┼──────────┤<br>│ www      │ <span class="hljs-number">0</span>  │ <span class="hljs-number">0.0</span><span class="hljs-number">.0</span>   │ fork │ <span class="hljs-number">21200</span> │ online │ <span class="hljs-number">0</span>       │ <span class="hljs-number">0</span>s     │ <span class="hljs-number">0</span>%  │ <span class="hljs-number">13.8</span> MB   │ root │ disabled │<br>└──────────┴────┴─────────┴──────┴───────┴────────┴─────────┴────────┴─────┴───────────┴──────┴──────────┘<br> Use `pm2 <span class="hljs-keyword">show</span> &lt;id|<span class="hljs-type">name</span>&gt;` <span class="hljs-keyword">to</span> <span class="hljs-keyword">get</span> more details about an app<br></code></pre></div></td></tr></table></figure>
+#####16. 查看应用运行情况</li>
+<li>pm2 show www<figure class="highlight pgsql"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs pgsql">[root@iZm5e33l0ge76uqi8nq87aZ <span class="hljs-number">0321</span>node]# pm2 <span class="hljs-keyword">show</span> www<br> Describing process <span class="hljs-keyword">with</span> id <span class="hljs-number">0</span> - <span class="hljs-type">name</span> www <br>┌───────────────────┬───────────────────────────────┐<br>│ status            │ online                        │<br>│ <span class="hljs-type">name</span>              │ www                           │<br>│ <span class="hljs-keyword">version</span>           │ <span class="hljs-number">0.0</span><span class="hljs-number">.0</span>                         │<br>│ restarts          │ <span class="hljs-number">0</span>                             │<br>│ uptime            │ <span class="hljs-number">3</span>m                            │<br>│ script <span class="hljs-type">path</span>       │ /<span class="hljs-keyword">work</span>/<span class="hljs-number">0321</span>node/bin/www        │<br>│ script args       │ N/A                           │<br>│ error <span class="hljs-keyword">log</span> <span class="hljs-type">path</span>    │ /root/.pm2/logs/www-error.<span class="hljs-keyword">log</span> │<br>│ <span class="hljs-keyword">out</span> <span class="hljs-keyword">log</span> <span class="hljs-type">path</span>      │ /root/.pm2/logs/www-<span class="hljs-keyword">out</span>.<span class="hljs-keyword">log</span>   │<br>│ pid <span class="hljs-type">path</span>          │ /root/.pm2/pids/www<span class="hljs-number">-0.</span>pid     │<br>│ interpreter       │ node                          │<br>│ interpreter args  │ N/A                           │<br>│ script id         │ <span class="hljs-number">0</span>                             │<br>│ exec cwd          │ /<span class="hljs-keyword">work</span>/<span class="hljs-number">0321</span>node                │<br>│ exec mode         │ fork_mode                     │<br>│ node.js <span class="hljs-keyword">version</span>   │ <span class="hljs-number">8.15</span><span class="hljs-number">.1</span>                        │<br>│ node env          │ N/A                           │<br>│ watch &amp; reload    │ ✘                             │<br>│ unstable restarts │ <span class="hljs-number">0</span>                             │<br>│ created at        │ <span class="hljs-number">2019</span><span class="hljs-number">-03</span><span class="hljs-number">-21</span>T07:<span class="hljs-number">31</span>:<span class="hljs-number">36.690</span>Z      │<br>└───────────────────┴───────────────────────────────┘<br> Code metrics <span class="hljs-keyword">value</span> <br>┌────────────────────────┬───────┐<br>│ Heap Size              │ <span class="hljs-number">13.83</span> │<br>│ Heap <span class="hljs-keyword">Usage</span>             │ <span class="hljs-number">71.93</span> │<br>│ Used Heap Size         │ <span class="hljs-number">9.95</span>  │<br>│ Active requests        │ <span class="hljs-number">0</span>     │<br>│ Active handles         │ <span class="hljs-number">4</span>     │<br>│ Event <span class="hljs-keyword">Loop</span> Latency     │ <span class="hljs-number">0.62</span>  │<br>│ Event <span class="hljs-keyword">Loop</span> Latency p95 │ <span class="hljs-number">1.69</span>  │<br>└────────────────────────┴───────┘<br> <span class="hljs-keyword">Add</span> your own code metrics: http://<span class="hljs-type">bit</span>.ly/code-metrics<br> Use `pm2 logs www [<span class="hljs-comment">--lines 1000]` to display logs</span><br> Use `pm2 env <span class="hljs-number">0</span>` <span class="hljs-keyword">to</span> display environement variables<br> Use `pm2 monit` <span class="hljs-keyword">to</span> monitor CPU <span class="hljs-keyword">and</span> Memory <span class="hljs-keyword">usage</span> www<br></code></pre></div></td></tr></table></figure>
+###<em>Nginx配置,承载对应的静态文件请求</em></li>
+</ul>
+<p>#####1.安装epel库</p>
+<ul>
+<li>yum install epel-release -y<figure class="highlight asciidoc"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs asciidoc">[root@iZm5e33l0ge76uqi8nq87aZ /]# yum install epel-release -y<br>已加载插件：fastestmirror<br>Loading mirror speeds from cached hostfile<br>正在解决依赖关系<br>--&gt; 正在检查事务<br>---&gt; 软件包 epel-release.noarch.0.7-11 将被 安装<br>--&gt; 解决依赖关系完成<br><span class="hljs-section">依赖关系解决</span><br><span class="hljs-section">======================================================================================================</span><br><span class="hljs-section"> Package                      架构                   版本                   源                    大小</span><br><span class="hljs-section">=======================================================================================================</span><br>正在安装:<br><span class="hljs-code"> epel-release                 noarch                 7-11                   epel                  15 k</span><br><span class="hljs-section">事务概要</span><br><span class="hljs-section">=======================================================================================================</span><br>安装  1 软件包<br>总下载量：15 k<br>安装大小：24 k<br>Downloading packages:<br>epel-release-7-11.noarch.rpm                                                    |  15 kB  00:00:00     <br>Running transaction check<br>Running transaction test<br>Transaction test succeeded<br>Running transaction<br><span class="hljs-code">  正在安装    : epel-release-7-11.noarch                                                           1/1 </span><br>警告：/etc/yum.repos.d/epel.repo 已建立为 /etc/yum.repos.d/epel.repo.rpmnew <br><span class="hljs-code">  验证中      : epel-release-7-11.noarch                                                           1/1 </span><br>已安装:<br><span class="hljs-code">  epel-release.noarch 0:7-11                                                                           </span><br>完毕！<br></code></pre></div></td></tr></table></figure>
+#####2.安装nginx</li>
+<li>yum -y install nginx<figure class="highlight subunit"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs subunit">  验证中      : gperftools-libs<span class="hljs-string">-2</span>.6.1<span class="hljs-string">-1</span>.el7.x86_64                                               20/25 <br>  验证中      : libX11-common<span class="hljs-string">-1</span>.6.5<span class="hljs-string">-2</span>.el7.noarch                                                 21/25 <br>  验证中      : freetype<span class="hljs-string">-2</span>.8<span class="hljs-string">-12</span>.el7_6.1.x86_64                                                   22/25 <br>  验证中      : 1:nginx-mod-http-perl<span class="hljs-string">-1</span>.12.2<span class="hljs-string">-2</span>.el7.x86_64                                        23/25 <br>  验证中      : 1:nginx-mod-http-image-filter<span class="hljs-string">-1</span>.12.2<span class="hljs-string">-2</span>.el7.x86_64                                24/25 <br>  验证中      : freetype<span class="hljs-string">-2</span>.4.11<span class="hljs-string">-15</span>.el7.x86_64                                                    25/25 <br><br>已安装:<br>  nginx.x86_64 1:1.12.2<span class="hljs-string">-2</span>.el7                                                                          <br>作为依赖被安装:<br>  dejavu-fonts-common.noarch 0:2.33<span class="hljs-string">-6</span>.el7        dejavu-sans-fonts.noarch 0:2.33<span class="hljs-string">-6</span>.el7                <br>  fontconfig.x86_64 0:2.13.0<span class="hljs-string">-4</span>.3.el7             fontpackages-filesystem.noarch 0:1.44<span class="hljs-string">-8</span>.el7          <br>  gd.x86_64 0:2.0.35<span class="hljs-string">-26</span>.el7                      gperftools-libs.x86_64 0:2.6.1<span class="hljs-string">-1</span>.el7                 <br>  libX11.x86_64 0:1.6.5<span class="hljs-string">-2</span>.el7                    libX11-common.noarch 0:1.6.5<span class="hljs-string">-2</span>.el7                   <br>  libXau.x86_64 0:1.0.8<span class="hljs-string">-2</span>.1.el7                  libXpm.x86_64 0:3.5.12<span class="hljs-string">-1</span>.el7                         <br>  libjpeg-turbo.x86_64 0:1.2.90<span class="hljs-string">-6</span>.el7            libpng.x86_64 2:1.5.13<span class="hljs-string">-7</span>.el7_2                       <br>  libxcb.x86_64 0:1.13<span class="hljs-string">-1</span>.el7                     libxslt.x86_64 0:1.1.28<span class="hljs-string">-5</span>.el7                        <br>  nginx-all-modules.noarch 1:1.12.2<span class="hljs-string">-2</span>.el7        nginx-filesystem.noarch 1:1.12.2<span class="hljs-string">-2</span>.el7               <br>  nginx-mod-http-geoip.x86_64 1:1.12.2<span class="hljs-string">-2</span>.el7     nginx-mod-http-image-filter.x86_64 1:1.12.2<span class="hljs-string">-2</span>.el7    <br>  nginx-mod-http-perl.x86_64 1:1.12.2<span class="hljs-string">-2</span>.el7      nginx-mod-http-xslt-filter.x86_64 1:1.12.2<span class="hljs-string">-2</span>.el7     <br>  nginx-mod-mail.x86_64 1:1.12.2<span class="hljs-string">-2</span>.el7           nginx-mod-stream.x86_64 1:1.12.2<span class="hljs-string">-2</span>.el7               <br>作为依赖被升级:<br>  freetype.x86_64 0:2.8<span class="hljs-string">-12</span>.el7_6.1                                                                     <br><br>完毕！<br></code></pre></div></td></tr></table></figure>
+#####3.启动nginx</li>
+<li>systemctl start nginx.service<br>#####4. 查看nginx状态 nginx -t<figure class="highlight vim"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs vim">[root@iZm5e33l0ge76uqi8nq87aZ <span class="hljs-keyword">conf</span>.d]# nginx -t<br>nginx: the configuration <span class="hljs-keyword">file</span> /etc/nginx/nginx.<span class="hljs-keyword">conf</span> <span class="hljs-keyword">syntax</span> <span class="hljs-keyword">is</span> ok<br>nginx: configuration <span class="hljs-keyword">file</span> /etc/nginx/nginx.<span class="hljs-keyword">conf</span> test <span class="hljs-keyword">is</span> successful<br></code></pre></div></td></tr></table></figure>
+#####5. 配置反向代理</li>
+<li>vim /etc/nginx/conf.d/demo.conf<figure class="highlight nginx"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs nginx"><span class="hljs-attribute">upstream</span> cloud-app &#123;<br><span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:3000</span>;<br><span class="hljs-attribute">keepalive</span> <span class="hljs-number">64</span>;<br>&#125;<br><span class="hljs-section">server</span> &#123;<br><span class="hljs-attribute">listen</span> <span class="hljs-number">3389</span>;<br><span class="hljs-attribute">server_name</span> <span class="hljs-number">47.105.181.201</span>;<br><span class="hljs-attribute">root</span> /root/cloud;<br><span class="hljs-attribute">location</span> / &#123;<br>        <span class="hljs-attribute">proxy_set_header</span> X-Forwarded-For $proxy_add_x_forwarded_for;<br>        <span class="hljs-attribute">proxy_set_header</span> Host $http_host;<br>        <span class="hljs-attribute">proxy_set_header</span> X-NginX-Proxy <span class="hljs-literal">true</span>;<br>        <span class="hljs-attribute">proxy_http_version</span> <span class="hljs-number">1</span>.<span class="hljs-number">1</span>;<br>        <span class="hljs-attribute">proxy_set_header</span> Upgrade $http_upgrade;<br>        <span class="hljs-attribute">proxy_set_header</span> Connection <span class="hljs-string">&quot;upgrade&quot;</span>;<br>        <span class="hljs-attribute">proxy_max_temp_file_size</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-attribute">proxy_pass</span> http://cloud-app/;<br>        <span class="hljs-attribute">proxy_redirect</span> <span class="hljs-literal">off</span>;<br>        <span class="hljs-attribute">proxy_read_timeout</span> <span class="hljs-number">240s</span>;<br>&#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+#####6. 检查nginx状态，没问题的话 重启nginx </li>
+<li>nginx -t</li>
+<li>nginx -s reload<figure class="highlight vim"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs vim">[root@iZm5e33l0ge76uqi8nq87aZ <span class="hljs-keyword">conf</span>.d]# nginx -t<br>nginx: the configuration <span class="hljs-keyword">file</span> /etc/nginx/nginx.<span class="hljs-keyword">conf</span> <span class="hljs-keyword">syntax</span> <span class="hljs-keyword">is</span> ok<br>nginx: configuration <span class="hljs-keyword">file</span> /etc/nginx/nginx.<span class="hljs-keyword">conf</span> test <span class="hljs-keyword">is</span> successful<br>[root@iZm5e33l0ge76uqi8nq87aZ <span class="hljs-keyword">conf</span>.d]# nginx -s reload<br></code></pre></div></td></tr></table></figure>
+#####7. 打开浏览器，输入更改后的端口，运行成功</li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E9%83%A8%E7%BD%B2/">部署</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Linux/">Linux</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Node/">Node</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/02/06/linux/linux2/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Linux下常用命令</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/06/10/react/react3/">
+                        <span class="hidden-mobile">less文件在React中的使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-x-md">
+    <div class="container custom post-custom mx-auto">
+      <img src="/img/qrcode/weixin.png" srcset="/img/loading.gif" lazyload class="rounded mx-auto d-block mt-5" style="width:360px; height:360x;">
+    </div>
+  </div>
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+    
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
